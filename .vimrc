@@ -1,124 +1,142 @@
  
-" Set 'nocompatible' to ward off unexpected things that your distro might
-" have made, as well as sanely reset options when re-sourcing .vimrc
 set nocompatible
- 
-" Attempt to determine the type of a file based on its name and possibly its
-" contents. Use this to allow intelligent auto-indenting for each filetype,
-" and for plugins that are filetype specific.
-
 filetype indent plugin on
-set nocp 
-" Enable syntax highlighting
-"let g:hybrid_custom_term_colors = 1
-"let g:hybrid_reduced_contrast = 1
-"colorscheme hybrid
-
-"-----------------------------------------------------------
-" Plugins
-"
-
-" Ctags shortcut
-map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 "Pathogen (runtime plugin manager)
 execute pathogen#infect()
 
-" Tagbar
-nmap <F8> :TagbarToggle<CR>
-
-"------------------------------------------------------------
-syntax enable 
-"set t_Co=256 
+"Colors
+"let g:hybrid_custom_term_colors = 1
+"let g:hybrid_reduced_contrast = 1
+"colorscheme hybrid
+" Solarized 
+syntax on
+set t_Co=256
 set background=dark
-"let g:solarlize_termcolors=256
 colorscheme solarized
 
-"fixing Cygwin cursor
+" fixing Cygwin cursor
 let &t_ti.="\e[1 q"
 let &t_SI.="\e[5 q"
-let &t_EI.="\e[1 q"
+let &t_EI.="\e[0 q"
 let &t_te.="\e[0 q"
 
-"------------------------------------------------------------
-" These are highly recommended options.
-"
-" One such option is the 'hidden' option, which allows you to re-use the same
-" window and switch from an unsaved buffer without saving it first. Also allows
-" you to keep an undo history for multiple files when re-using the same window
-" in this way. Note that using persistent undo also lets you undo in multiple
-" files even in the same window, but is less efficient and is actually designed
-" for keeping undo history after closing Vim entirely. Vim will complain if you
-" try to quit without saving, and swap files will keep you safe if your computer
-" crashes.
+"General Settings
+"Allow switching buffers without saving first
 set hidden
-" Better command-line completion
+
+set wildmode=full
 set wildmenu
-" Show partial commands in the last line of the screen
 set showcmd
-" Highlight searches (use <C-L> to temporarily turn off highlighting; see the
-" mapping of <C-L> below)
 set hlsearch
- 
-"------------------------------------------------------------
-" Usability options {{{1
-" Use case insensitive search, except when using capital letters
+set wildignore+=*.o
+
 set ignorecase
 set smartcase
-" Allow backspacing over autoindent, line breaks and start of insert action
-set backspace=indent,eol,start
-" When opening a new line and no filetype-specific indenting is enabled, keep
-" the same indent as the line you're currently on. Useful for READMEs, etc.
+" set backspace=indent,eol,start
 set autoindent
-" Display the cursor position on the last line of the screen or in the status
-" line of a window
 set ruler
-" Always display the status line, even if only one window is displayed
 set laststatus=2
-" Instead of failing a command because of unsaved changes, instead raise a
-" dialogue asking if you wish to save changed files.
 set confirm
-" Use visual bell instead of beeping when doing something wrong
 set visualbell
-" And reset the terminal code for the visual bell. If visualbell is set, and
-" this line is also included, vim will neither flash nor beep. If visualbell
-" is unset, this does nothing.
-"set t_vb=
-" Enable use of the mouse for all modes
-set mouse=a
-" Set the command window height to 2 lines, to avoid many cases of having to
-" "press <Enter> to continue"
+"set mouse=a
 set cmdheight=2
-" Display line numbers on the left
 set number
 " Quickly time out on keycodes, but never time out on mappings
 set notimeout ttimeout ttimeoutlen=200
 " Use <F11> to toggle between 'paste' and 'nopaste'
 set pastetoggle=<F11>
 
-"------------------------------------------------------------
-" Indentation options {{{1
-"
-" Indentation settings for using 4 spaces instead of tabs.
-" Do not change 'tabstop' from its default value of 8 with this setup.
+" Indentation options
 set shiftwidth=3
 set softtabstop=3
 set expandtab
- 
-" Indentation settings for using hard tabs for indent. Display tabs as
-" four characters wide.
-"set shiftwidth=4
-"set tabstop=4
- 
-"------------------------------------------------------------
-" Mappings {{{1
-"
-" Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
-" which is the default
+
+set nowrap
+
+
+
+"highlight ColorColumn ctermbg=magenta
+"call matchadd('ColorColumn', '\%81v', 100)
+
+
+"set foldmethod=syntax
+"set foldcolumn=2
+autocmd Syntax c,cpp,vim,xml,html,xhtml setlocal foldmethod=syntax
+autocmd Syntax c,cpp,vim,xml,html,xhtml,perl normal zR
+
+" Mappings
+let mapleader=","
+inoremap jk <esc>
+nnoremap <leader>ev :vs $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+" Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy
 map Y y$
- 
-" Map <C-L> (redraw screen) to also turn off search highlighting until the
-" next search
-nnoremap <C-L> :nohl<CR><C-L>
- 
-"------------------------------------------------------------
+" turn off search highlighting until the next search
+nnoremap <leader>l :nohl<CR>
+" Ctags shortcut
+nnoremap <leader><F12> :!ctags -L cscope.files --c++-kinds=+pl --fields=+iaS --extra=+q <CR>
+nnoremap <leader><F12><F12> :!cscope -i cscope.files -b
+" Tagbar
+"nnoremap <silent><leader>bb :TagbarOpenAutoClose<CR>
+nnoremap <silent><leader>bb :TagbarToggle<CR>
+"autocmd BufRead *.cpp TagbarOpen
+"
+
+nnoremap <leader>p :bp<cr>
+nnoremap <leader>n :bn<cr>
+nnoremap <leader>d :bp\|bd#<cr>
+
+"NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+nnoremap <silent><leader>t :NERDTreeToggle<CR>
+
+"functions
+function! s:insert_gates()
+   let gatename = substitute(toupper(expand("%:t")), "\\.", "_", "g")
+   execute "normal! i#ifndef " . gatename
+   execute "normal! o#define " . gatename . " "
+   execute "normal! Go#endif /* " . gatename . " */"
+   normal! kk
+endfunction
+autocmd BufNewFile *.{h,hpp} call <SID>insert_gates()
+
+
+function! FindInc()
+  let oldPath=&path
+  set path=$PWD/**
+
+  exe ":find " t:newIncSw
+
+  let &path=oldPath
+endfun
+
+function! CurtineIncSw()
+
+  if exists("t:oldIncSw") && expand("%:t:r") == fnamemodify(t:oldIncSw, ":t:r")
+    let t:newIncSw=t:oldIncSw
+    let t:oldIncSw=expand("%:p")
+    exe "e " t:newIncSw
+    return 0
+  endif
+
+  if match(expand("%"), '\.c') > 0
+    let l:hFileName = substitute(expand("%:t"), '\.cpp', '\.h', "")
+    let l:hppFileName = substitute(expand("%:t"), '\.c\(.*\)', '.h\1', "")
+
+    if !empty(globpath("**",l:hFileName))
+      let t:newIncSw=hFileName
+    else
+      let t:newIncSw=hppFileName
+    endif
+
+  elseif match(expand("%"), "\.h") > 0
+    let t:newIncSw=substitute(expand("%:t"), '\.h\(.*\)', '.cpp', "")
+  endif
+
+  call FindInc()
+endfun
+
+nnoremap <silent><leader>ss :call CurtineIncSw()<CR>
+
