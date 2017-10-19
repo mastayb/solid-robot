@@ -16,9 +16,15 @@ Plug 'w0rp/ale'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'tpope/vim-sensible'
 Plug 'ericcurtin/CurtineIncSw.vim'
+Plug 'jpalardy/vim-slime'
 call plug#end()
 
 """""""""""""""""""" Plugin Settings """"""""""""""""""""
+let g:ale_fixers = {
+    \   'python': ['yapf'] 
+    \   }
+
+let g:slime_target = 'tmux'
 
 """""""""""""""""""" Default settings """"""""""""""""""""
 set t_Co=256
