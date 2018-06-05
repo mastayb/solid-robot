@@ -27,7 +27,7 @@ let g:ale_fixers = {
 let g:slime_target = 'tmux'
 
 """""""""""""""""""" Default settings """"""""""""""""""""
-set t_Co=256
+"set t_Co=256
 set background=dark
 colorscheme solarized
 set hidden
@@ -64,6 +64,12 @@ au FileType python
    \ set textwidth=79 |
    \ set fileformat=unix |
    \ set encoding=utf-8
+
+au FileType xml
+   \ set tabstop=2 |
+   \ set softtabstop=2 |
+   \ set shiftwidth=2 |
+   
 """" Cygwin Cursor fix """"
 if has("win32unix")
   let &t_ti.="\e[1 q"
@@ -85,3 +91,4 @@ nnoremap <silent><leader>ss :call CurtineIncSw()<CR>
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 
 """""""""""""""""""" autocmds """""""""""""""""""" 
+au BufNewFile,BufRead *.launch,*.urdf,*.xacro set filetype=xml
