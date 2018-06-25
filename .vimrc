@@ -17,6 +17,8 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'tpope/vim-sensible'
 Plug 'ericcurtin/CurtineIncSw.vim'
 Plug 'jpalardy/vim-slime'
+Plug 'vimwiki/vimwiki'
+Plug 'taketwo/vim-ros'
 call plug#end()
 
 """""""""""""""""""" Plugin Settings """"""""""""""""""""
@@ -24,7 +26,18 @@ let g:ale_fixers = {
     \   'python': ['yapf'] 
     \   }
 
+let g:ale_linters = {
+    \   'python': ['flake8']
+    \   }
+
+let g:ale_fix_on_save = 1
+
 let g:slime_target = 'tmux'
+
+let g:ycm_semantic_triggers = {
+   \ 'roslaunch' : ['="', '$(', '/'],
+   \ 'rosmsg,rossrv,rosaction' : ['re^!', '/'],
+   \ }
 
 """""""""""""""""""" Default settings """"""""""""""""""""
 "set t_Co=256
@@ -91,4 +104,4 @@ nnoremap <silent><leader>ss :call CurtineIncSw()<CR>
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 
 """""""""""""""""""" autocmds """""""""""""""""""" 
-au BufNewFile,BufRead *.launch,*.urdf,*.xacro set filetype=xml
+"au BufNewFile,BufRead *.launch,*.urdf,*.xacro set filetype=xml
